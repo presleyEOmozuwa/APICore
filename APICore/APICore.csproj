@@ -1,0 +1,64 @@
+﻿
+<Project Sdk="Microsoft.NET.Sdk.Web">
+	<PropertyGroup>
+		<TargetFramework>net5.0</TargetFramework>
+	  <UserSecretsId>527d2cea-1540-4461-995a-add2dc0f9100</UserSecretsId>
+	  <DockerComposeProjectPath>../docker-compose.dcproj</DockerComposeProjectPath>
+  </PropertyGroup>
+	<ItemGroup>
+		<None Remove="Controllers\" />
+		<None Remove="DataService\" />
+		<None Remove="EmailService\" />
+		<None Remove="ModelService\" />
+		<None Remove="GoogleService\" />
+		<None Remove="Google.Apis.Auth" />
+		<None Remove="Microsoft.AspNetCore.Authentication.JwtBearer" />
+		<None Remove="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
+		<None Remove="Microsoft.EntityFrameworkCore.Design" />
+		<None Remove="Microsoft.EntityFrameworkCore.Tools" />
+		<None Remove="Pomelo.EntityFrameworkCore.MySql" />
+		<None Remove="NETCore.MailKit" />
+		<None Remove="TokenService\" />
+		<None Remove="Stripe.net" />
+		<None Remove="Repository\" />
+		<None Remove="CartManager\" />
+		<None Remove="ProductModelService\" />
+		<None Remove="Interfaces\" />
+		<None Remove="UserUpdateTokenSvc\" />
+		<None Remove="AutoMapper.Extensions.Microsoft.DependencyInjection" />
+		<None Remove="Helpers\" />
+	</ItemGroup>
+	<ItemGroup>
+		<Folder Include="Controllers\" />
+		<Folder Include="DataService\" />
+		<Folder Include="EmailService\" />
+		<Folder Include="ModelService\" />
+		<Folder Include="GoogleService\" />
+		<Folder Include="TokenService\" />
+		<Folder Include="Repository\" />
+		<Folder Include="wwwroot\EmailTemplates\" />
+		<Folder Include="DataModelService\" />
+		<Folder Include="DataInterfaces\" />
+		<Folder Include="Helpers\" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Google.Apis.Auth" Version="1.55.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.11" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.11" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.11">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.11">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+		<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="5.0.2" />
+		<PackageReference Include="NETCore.MailKit" Version="2.0.3" />
+		<PackageReference Include="Stripe.net" Version="39.76.0" />
+		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+	</ItemGroup>
+	<ItemGroup>
+		<Content Remove="wwwroot\EmailTemplates\" />
+	</ItemGroup>
+</Project>

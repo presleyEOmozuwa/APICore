@@ -56,7 +56,6 @@ namespace APICore
             services.AddHttpContextAccessor();
 
             services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
-
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             services.Configure<GoogleAuthSettings>(Configuration.GetSection("GoogleAuthSettings"));
             services.Configure<StripeSettings>(Configuration.GetSection("StripeSettings"));

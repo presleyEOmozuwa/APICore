@@ -82,6 +82,5 @@ namespace APICore.Repository
         {
             await _userManager.ChangePasswordAsync(user, req.PasswordHash, req.Password);
         }
-
     }
 }

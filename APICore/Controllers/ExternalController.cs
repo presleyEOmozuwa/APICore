@@ -34,10 +34,11 @@ namespace APICore.Controllers
         private readonly IGoogleJwtValidator _googleJwtValidator;
         private readonly GoogleAuthSettings _googleSettings;
         private readonly ISubscriptionRepository _subscriberRepository;
+        private readonly IAppUserRepository _appUserRepo;
 
 
 
-        public ExternalController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signManager, RoleManager<IdentityRole> roleManager, IOptions<AppSettings> appConfig, IJWtokenGenerator jwtokenGenerator, IHttpContextAccessor accessor, IEmailSvc emailSvc, IGoogleJwtValidator googleJwtValidator, IOptions<GoogleAuthSettings> googleSettings, ISubscriptionRepository subscriberRepository)
+        public ExternalController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signManager, RoleManager<IdentityRole> roleManager, IOptions<AppSettings> appConfig, IJWtokenGenerator jwtokenGenerator, IHttpContextAccessor accessor, IEmailSvc emailSvc, IGoogleJwtValidator googleJwtValidator, IOptions<GoogleAuthSettings> googleSettings, ISubscriptionRepository subscriberRepository, IAppUserRepository appUserRepo)
         {
             _userManager = userManager;
             _signManager = signManager;
@@ -49,6 +50,7 @@ namespace APICore.Controllers
             _googleJwtValidator = googleJwtValidator;
             _googleSettings = googleSettings.Value;
             _subscriberRepository = subscriberRepository;
+            _appUserRepo = appUserRepo;
 
         }
 
@@ -62,44 +64,79 @@ namespace APICore.Controllers
             {
                 return BadRequest(new { IsAuthenticated = false, Message = " Authentication Failed" });
             }
+
+            var info = new UserLoginInfo(creds.Provider, payload.Subject, creds.Provider);
+            var userByLogin = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
+            var userByEmail = await _userManager.FindByEmailAsync(payload.Email);
+
+            if (userByLogin == null || userByLogin.FirstName == "Guest")
+            {
+                userByLogin = new ApplicationUser() { FirstName = "Guest", LastName = "Google", Email = payload.Email, UserName = payload.Email };
+                await _userManager.CreateAsync(userByLogin);
+                await _userManager.AddLoginAsync(userByLogin, info);
+
+                var response = await _subscriberRepository.MockUp(userByLogin);
+                response.IsExternalLogger = true;
+                response.Message = "Guest";
+                return Ok(new { token = _jwtokenGenerator.GenerateToken(userByLogin), Response = response });
+            }
+
+            else if (userByLogin != null)
+            {
+                var response = await _subscriberRepository.MockUp(userByLogin);
+                response.IsExternalLogger = true;
+                response.Message = "InHouseUser";
+                return Ok(new { token = _jwtokenGenerator.GenerateToken(userByLogin), Response = response });
+            }
+
             else
             {
-                var info = new UserLoginInfo(creds.Provider, payload.Subject, creds.Provider);
-                var user = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
-
-                if (user == null)
-                {
-                    user = await _userManager.FindByEmailAsync(payload.Email);
-
-                    if (user == null)
-                    {
-                        user = new ApplicationUser() { FirstName = "Guest", LastName = "Google", Email = payload.Email, UserName = payload.Email };
-                        await _userManager.CreateAsync(user);
-                        await _userManager.AddLoginAsync(user, info);
-
-                        var response = await _subscriberRepository.MockUp(user);
-                        response.IsExternalLogger = true;
-                        response.Message = "No account, no extacc";
-                        return Ok(new { token = _jwtokenGenerator.GenerateToken(user), Response = response });
-                    }
-                    else
-                    {
-                        await _userManager.AddLoginAsync(user, info);
-                        var response = await _subscriberRepository.MockUp(user);
-                        response.IsExternalLogger = true;
-                        response.Message = "Has account, no extacc";
-                        return Ok(new { token = _jwtokenGenerator.GenerateToken(user), Response = response });
-                    }
-
-                }
-                else
-                {
-                    var response = await _subscriberRepository.MockUp(user);
-                    response.IsExternalLogger = true;
-                    response.Message = "Has account, has extacc";
-                    return Ok(new { token = _jwtokenGenerator.GenerateToken(user), Response = response });
-                }
+                var response = await _subscriberRepository.MockUp(userByEmail);
+                await _userManager.AddLoginAsync(userByEmail, info);
+                response.IsExternalLogger = true;
+                response.Message = "Grafter";
+                return Ok(new { token = _jwtokenGenerator.GenerateToken(userByLogin), Response = response });
             }
+
+
+            //else
+            //{
+            //    var info = new UserLoginInfo(creds.Provider, payload.Subject, creds.Provider);
+            //    var user = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
+
+            //    if (user == null)
+            //    {
+            //        user = await _userManager.FindByEmailAsync(payload.Email);
+
+            //        if (user == null)
+            //        {
+            //            user = new ApplicationUser() { FirstName = "Guest", LastName = "Google", Email = payload.Email, UserName = payload.Email };
+            //            await _userManager.CreateAsync(user);
+            //            await _userManager.AddLoginAsync(user, info);
+
+            //            var response = await _subscriberRepository.MockUp(user);
+            //            response.IsExternalLogger = true;
+            //            response.Message = "No account, no extacc";
+            //            return Ok(new { token = _jwtokenGenerator.GenerateToken(user), Response = response });
+            //        }
+            //        else
+            //        {
+            //            await _userManager.AddLoginAsync(user, info);
+            //            var response = await _subscriberRepository.MockUp(user);
+            //            response.IsExternalLogger = true;
+            //            response.Message = "Has account, no extacc";
+            //            return Ok(new { token = _jwtokenGenerator.GenerateToken(user), Response = response });
+            //        }
+
+            //    }
+            //    else
+            //    {
+            //        var response = await _subscriberRepository.MockUp(user);
+            //        response.IsExternalLogger = true;
+            //        response.Message = "Has account, has extacc";
+            //        return Ok(new { token = _jwtokenGenerator.GenerateToken(user), Response = response });
+            //    }
+            //}
         }
     }
 }

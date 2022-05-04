@@ -52,7 +52,6 @@ namespace APICore.Controllers
             };
 
             var result = await _userManager.CreateAsync(appUser, model.Password);
-            var allUsers = _userManager.Users.OrderBy(u => u.FirstName).ToList();
 
             if (result.Succeeded)
             {

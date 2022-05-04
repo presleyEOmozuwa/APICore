@@ -67,7 +67,7 @@ namespace APICore.Controllers
 
             var response = await _subscriberRepository.MockUp(user);
             response.IsExternalLogger = false;
-            response.Message = "AppLogger";
+            response.Message = "InHouse";
             return Ok(new { token = _jwtokenGenerator.GenerateToken(user), Response = response });
         }
 

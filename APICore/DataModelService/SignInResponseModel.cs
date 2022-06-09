@@ -7,6 +7,6 @@ namespace APICore.DataModelService
         public bool IsSubscriber { get; set; }
         public bool IsExternalLogger { get; set; }
         public DateTime ExpDate { get; set; }
-        public string Message { get; set; }
+        public bool IsEmailConfirmed { get; set; }
     }
 }

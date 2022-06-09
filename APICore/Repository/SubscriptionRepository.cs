@@ -33,7 +33,7 @@ namespace APICore.Repository
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<Subscriber>> GetAsync()
+        public async Task<List<Subscriber>> GetAsync()
         {
             return await _context.Subscribers.ToListAsync();
         }
@@ -78,6 +78,5 @@ namespace APICore.Repository
             await _context.SaveChangesAsync();
             return subscription;
         }
-
     }
 }

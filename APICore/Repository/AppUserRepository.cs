@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using APICore.DataInterfaces;
@@ -12,6 +15,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace APICore.Repository
 {
@@ -19,19 +23,39 @@ namespace APICore.Repository
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IHttpContextAccessor _accessor;
-        private readonly IGoogleJwtValidator _validator;
+        private readonly HttpClient _httpClient;
+        private readonly UserApiOptions _userOptions;
 
-        public AppUserRepository(UserManager<ApplicationUser> userManager, IHttpContextAccessor accessor, IGoogleJwtValidator validator)
+        public AppUserRepository(UserManager<ApplicationUser> userManager, IHttpContextAccessor accessor, HttpClient httpClient, IOptions<UserApiOptions> userOptions)
         {
             _userManager = userManager;
             _accessor = accessor;
-            _validator = validator;
+            _httpClient = httpClient;
+            _userOptions = userOptions.Value;
         }
 
-        public async Task<IList<ApplicationUser>> GetUsers()
+        public async Task<List<ApplicationUser>> GetUsers()
         {
-            return await _userManager.Users.ToListAsync();
+            var userResponse = await _httpClient.GetAsync(_userOptions.Endpoint);
+            if (userResponse.StatusCode == HttpStatusCode.NotFound)
+            {
+                return new List<ApplicationUser>();
+            }
+            else
+            {
+                var responseContent = userResponse.Content;
+                var allUsers = await responseContent.ReadFromJsonAsync<List<ApplicationUser>>();
+                return allUsers;
+            }
         }
+
+
+        //public async Task<List<ApplicationUser>> GetUsers()
+        //{
+        //    var users = _userManager.Users;
+        //    return await Task.FromResult(users.ToList());
+        //}
+
 
         public async Task<ApplicationUser> GetUserById(string id)
         {

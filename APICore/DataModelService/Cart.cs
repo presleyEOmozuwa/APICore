@@ -16,6 +16,6 @@ namespace APICore.DataModelService
 
         public string DateCreated { get; set; }
 
-        public virtual IList<CourseCart> CourseCarts { get; set; } = new List<CourseCart>();
+        public virtual List<CourseCart> CourseCarts { get; set; } = new List<CourseCart>();
     }
 }

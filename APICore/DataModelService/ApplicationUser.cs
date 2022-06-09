@@ -2,7 +2,7 @@
 using APICore.DataModelService;
 using Microsoft.AspNetCore.Identity;
 
-namespace APICore.ModelService
+namespace APICore.DataModelService
 {
     public class ApplicationUser : IdentityUser
     {

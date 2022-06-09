@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 using APICore.DataModelService;
 using APICore.ModelService;
@@ -9,7 +10,7 @@ namespace APICore.DataInterfaces
 {
     public interface IAppUserRepository
     {
-        Task<IList<ApplicationUser>> GetUsers();
+        Task<List<ApplicationUser>> GetUsers();
         Task<ApplicationUser> GetUserById(string id);
         Task<ApplicationUser> GetUserFromAppContext();
         Task<ApplicationUser> UpdateFirstName(ApplicationUser user);

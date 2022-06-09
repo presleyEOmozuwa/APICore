@@ -1,13 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 using APICore.ModelService;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Stripe;
+using Twilio.Clients;
+using Twilio.Rest.Api.V2010.Account;
+using Twilio.Types;
 
 namespace APICore.Controllers
 {
@@ -15,9 +23,13 @@ namespace APICore.Controllers
     [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
-        public UserController(IOptions<StripeSettings> stripeSettings)
-        {
+        private readonly StripeSettings _stripeSettings;
+        private readonly IHttpContextAccessor _accessor;
 
+        public UserController(IOptions<StripeSettings> stripeSettings, IHttpContextAccessor accessor)
+        {
+            _stripeSettings = stripeSettings.Value;
+            _accessor = accessor;
         }
 
         //POLICY BASED AUTHORIZATION, THIS IS RECOMMENDED
@@ -73,11 +85,41 @@ namespace APICore.Controllers
             return Ok();
         }
 
-        [HttpGet("test")]
-        [Authorize]
-        public string[] GetNames()
+        [HttpGet("values")]
+        public string[] GetAllVal()
         {
-            return new string[] { "Smith", "James", "Woods" };
+            string path = _accessor.HttpContext.Request.Path.Value;
+            return new string[] { "Apples", "Books", path };
+        }
+
+        [HttpGet("test")]
+        public string GetNames()
+        {
+            var host = Dns.GetHostEntry("www.facebook.com");
+            foreach (var ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    return ip.ToString();
+                }
+            }
+            throw new Exception("No network adapters with an IPv4 address in the system!");
+
+            //return new string[] { "Presley", "Alexis", "Woods", ipAddress };
+        }
+
+        [HttpGet("address")]
+        public string GetIp()
+        {
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    return ip.ToString();
+                }
+            }
+            throw new Exception("No network adapters with an IPv4 address in the system!");
         }
 
     }

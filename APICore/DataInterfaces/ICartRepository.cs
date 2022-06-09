@@ -8,7 +8,7 @@ namespace APICore.DataInterfaces
 {
     public interface ICartRepository
     {
-        Task<IList<Cart>> GetCartList();
+        Task<List<Cart>> GetCartList();
         Task<IEnumerable<Course>> GetStoreItems(string id);
         Task<Cart> GetCart(string id);
 

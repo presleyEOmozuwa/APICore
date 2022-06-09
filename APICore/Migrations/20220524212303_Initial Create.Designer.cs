@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace APICore.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220408184722_Initial Create")]
+    [Migration("20220524212303_Initial Create")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -18,6 +18,85 @@ namespace APICore.Migrations
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 64)
                 .HasAnnotation("ProductVersion", "5.0.11");
+
+            modelBuilder.Entity("APICore.DataModelService.ApplicationUser", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("CreatedAt")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("CustomerId")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("longtext");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("longtext");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("longtext");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("UpdatedAt")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex");
+
+                    b.ToTable("AspNetUsers");
+                });
 
             modelBuilder.Entity("APICore.DataModelService.Cart", b =>
                 {
@@ -249,85 +328,6 @@ namespace APICore.Migrations
                     b.ToTable("Subscribers");
                 });
 
-            modelBuilder.Entity("APICore.ModelService.ApplicationUser", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("CreatedAt")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("CustomerId")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("FirstName")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("longtext");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("longtext");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("longtext");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("UpdatedAt")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
-
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("UserNameIndex");
-
-                    b.ToTable("AspNetUsers");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -458,7 +458,7 @@ namespace APICore.Migrations
 
             modelBuilder.Entity("APICore.DataModelService.Cart", b =>
                 {
-                    b.HasOne("APICore.ModelService.ApplicationUser", null)
+                    b.HasOne("APICore.DataModelService.ApplicationUser", null)
                         .WithOne("Cart")
                         .HasForeignKey("APICore.DataModelService.Cart", "ApplicationUserId");
                 });
@@ -491,7 +491,7 @@ namespace APICore.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("APICore.ModelService.ApplicationUser", null)
+                    b.HasOne("APICore.DataModelService.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -500,7 +500,7 @@ namespace APICore.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("APICore.ModelService.ApplicationUser", null)
+                    b.HasOne("APICore.DataModelService.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -515,7 +515,7 @@ namespace APICore.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("APICore.ModelService.ApplicationUser", null)
+                    b.HasOne("APICore.DataModelService.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -524,11 +524,16 @@ namespace APICore.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("APICore.ModelService.ApplicationUser", null)
+                    b.HasOne("APICore.DataModelService.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("APICore.DataModelService.ApplicationUser", b =>
+                {
+                    b.Navigation("Cart");
                 });
 
             modelBuilder.Entity("APICore.DataModelService.Cart", b =>
@@ -539,11 +544,6 @@ namespace APICore.Migrations
             modelBuilder.Entity("APICore.DataModelService.Course", b =>
                 {
                     b.Navigation("CourseCarts");
-                });
-
-            modelBuilder.Entity("APICore.ModelService.ApplicationUser", b =>
-                {
-                    b.Navigation("Cart");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using APICore.DataModelService;
 using APICore.ModelService;
 using Google.Apis.Auth;
 using Microsoft.AspNetCore.Identity;

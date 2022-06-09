@@ -27,7 +27,7 @@ namespace APICore.Repository
             _mapper = mapper;
         }
 
-        public async Task<IList<Cart>> GetCartList()
+        public async Task<List<Cart>> GetCartList()
         {
             return await _context.Carts.ToListAsync();
         }

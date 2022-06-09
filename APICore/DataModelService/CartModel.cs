@@ -8,6 +8,6 @@ namespace APICore.DataModelService
     {
         public int ItemCount { get; set; }
 
-        public IList<CourseModel> Courses { get; set; }
+        public List<CourseModel> Courses { get; set; }
     }
 }

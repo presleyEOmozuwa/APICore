@@ -20,20 +20,16 @@ namespace APICore.Controllers
     public class AppUserController : ControllerBase
     {
         private readonly IAppUserRepository _appUserRepo;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IMapper _mapper;
 
-        public AppUserController(IAppUserRepository appUserRepo, UserManager<ApplicationUser> userManager, IMapper mapper)
+        public AppUserController(IAppUserRepository appUserRepo)
         {
             _appUserRepo = appUserRepo;
-            _userManager = userManager;
-            _mapper = mapper;
         }
 
 
         [HttpGet("users")]
-        [Authorize]
-        public async Task<IActionResult> GetUserList()
+        //[Authorize]
+        public async Task<IActionResult> GetUsers()
         {
             var model = new List<AppUserModel>();
             var usersDb = await _appUserRepo.GetUsers();
@@ -51,14 +47,12 @@ namespace APICore.Controllers
                     model.Add(appModel);
                 }
 
-                if (model != null)
-                {
-                    return Ok(model);
-                }
+                return Ok(model);
             }
 
-            return BadRequest(new { Status = "Request Attempt Failed" });
+            return NotFound(new { Status = "Request Attempt Failed" });
         }
+
 
         [HttpGet("users/{id}")]
         [Authorize]
@@ -77,8 +71,10 @@ namespace APICore.Controllers
 
                 return Ok(model);
             }
-
-            return BadRequest(new { Status = "Request Failed" });
+            else
+            {
+                return BadRequest(new { Status = "Request Failed" });
+            }
         }
 
         [HttpPost("firstname-update")]

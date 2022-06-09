@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace APICore.ModelService
+namespace APICore.DataModelService
 {
     public class AppUserModel
     {

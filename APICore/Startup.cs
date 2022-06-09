@@ -21,6 +21,10 @@ using APICore.DataModelService;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Http;
 using System.Linq;
+using Twilio.Clients;
+using Microsoft.AspNetCore.HttpOverrides;
+using System.Net;
+using APICore.SmsService;
 
 namespace APICore
 {
@@ -41,6 +45,8 @@ namespace APICore
 
             services.AddTransient<IEmailSvc, EmailSvc>();
 
+            services.AddTransient<ISmsSvc, SmsSvc>();
+
             services.AddTransient<IGoogleJwtValidator, GoogleJwtValidator>();
 
             services.AddTransient<ISubscriptionRepository, SubscriptionRepository>();
@@ -51,14 +57,22 @@ namespace APICore
 
             services.AddTransient<IAppUserRepository, AppUserRepository>();
 
+            services.AddHttpClient<IAppUserRepository, AppUserRepository>();
+
+            services.AddHttpClient<ITwilioRestClient, TwilioRestClient>();
+
+
+
+
 
             //services.AddRazorPages();
             services.AddHttpContextAccessor();
-
             services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             services.Configure<GoogleAuthSettings>(Configuration.GetSection("GoogleAuthSettings"));
             services.Configure<StripeSettings>(Configuration.GetSection("StripeSettings"));
+            services.Configure<TwilioSettings>(Configuration.GetSection("TwiloSettings"));
+            services.Configure<UserApiOptions>(Configuration.GetSection("UserApiOptions"));
 
 
             services.AddDbContext<ApplicationDbContext>(options =>

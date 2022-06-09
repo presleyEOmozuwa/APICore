@@ -9,6 +9,7 @@ using APICore.ModelService;
 using APICore.TokenService;
 using APICore.GoogleService;
 using APICore.DataInterfaces;
+using APICore.DataModelService;
 
 namespace APICore.Controllers
 {
@@ -67,7 +68,8 @@ namespace APICore.Controllers
 
             var response = await _subscriberRepository.MockUp(user);
             response.IsExternalLogger = false;
-            response.Message = "InHouse";
+            response.IsEmailConfirmed = user.EmailConfirmed;
+            Console.WriteLine("Testing the Application Console");
             return Ok(new { token = _jwtokenGenerator.GenerateToken(user), Response = response });
         }
 

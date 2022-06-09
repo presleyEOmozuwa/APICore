@@ -9,6 +9,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using APICore.ModelService;
 using APICore.TokenService;
+using APICore.DataModelService;
 
 namespace APICore.TokenService
 {

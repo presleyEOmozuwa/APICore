@@ -7,7 +7,7 @@ namespace APICore.DataInterfaces
 {
     public interface ISubscriptionRepository
     {
-        Task<IEnumerable<Subscriber>> GetAsync();
+        Task<List<Subscriber>> GetAsync();
         Task<Subscriber> GetByIdAsync(string id);
         Task<Subscriber> GetByCustomerIdAsync(string id);
         Task<Subscriber> CreateAsync(Subscriber subscription);

@@ -17,6 +17,7 @@ using APICore.ModelService;
 using APICore.TokenService;
 using APICore.GoogleService;
 using APICore.DataInterfaces;
+using APICore.DataModelService;
 
 namespace APICore.Controllers
 {
@@ -66,77 +67,37 @@ namespace APICore.Controllers
             }
 
             var info = new UserLoginInfo(creds.Provider, payload.Subject, creds.Provider);
-            var userByLogin = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
-            var userByEmail = await _userManager.FindByEmailAsync(payload.Email);
+            var user = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
 
-            if (userByLogin == null || userByLogin.FirstName == "Guest")
+            if (user != null)
             {
-                userByLogin = new ApplicationUser() { FirstName = "Guest", LastName = "Google", Email = payload.Email, UserName = payload.Email };
-                await _userManager.CreateAsync(userByLogin);
-                await _userManager.AddLoginAsync(userByLogin, info);
-
-                var response = await _subscriberRepository.MockUp(userByLogin);
+                var response = await _subscriberRepository.MockUp(user);
                 response.IsExternalLogger = true;
-                response.Message = "Guest";
-                return Ok(new { token = _jwtokenGenerator.GenerateToken(userByLogin), Response = response });
+                response.IsEmailConfirmed = user.EmailConfirmed;
+                return Ok(new { token = _jwtokenGenerator.GenerateToken(user), Response = response });
             }
-
-            else if (userByLogin != null)
-            {
-                var response = await _subscriberRepository.MockUp(userByLogin);
-                response.IsExternalLogger = true;
-                response.Message = "InHouseUser";
-                return Ok(new { token = _jwtokenGenerator.GenerateToken(userByLogin), Response = response });
-            }
-
             else
             {
-                var response = await _subscriberRepository.MockUp(userByEmail);
-                await _userManager.AddLoginAsync(userByEmail, info);
-                response.IsExternalLogger = true;
-                response.Message = "Grafter";
-                return Ok(new { token = _jwtokenGenerator.GenerateToken(userByLogin), Response = response });
+                user = await _userManager.FindByEmailAsync(payload.Email);
+                if (user != null)
+                {
+                    var response = await _subscriberRepository.MockUp(user);
+                    await _userManager.AddLoginAsync(user, info);
+                    response.IsExternalLogger = true;
+                    response.IsEmailConfirmed = user.EmailConfirmed;
+                    return Ok(new { token = _jwtokenGenerator.GenerateToken(user), Response = response });
+                }
+                else
+                {
+                    user = new ApplicationUser() { FirstName = "Guest", LastName = "Google", Email = payload.Email, UserName = payload.Email };
+                    await _userManager.CreateAsync(user);
+                    await _userManager.AddLoginAsync(user, info);
+                    var response = await _subscriberRepository.MockUp(user);
+                    response.IsExternalLogger = true;
+                    response.IsEmailConfirmed = user.EmailConfirmed;
+                    return Ok(new { token = _jwtokenGenerator.GenerateToken(user), Response = response });
+                }
             }
-
-
-            //else
-            //{
-            //    var info = new UserLoginInfo(creds.Provider, payload.Subject, creds.Provider);
-            //    var user = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
-
-            //    if (user == null)
-            //    {
-            //        user = await _userManager.FindByEmailAsync(payload.Email);
-
-            //        if (user == null)
-            //        {
-            //            user = new ApplicationUser() { FirstName = "Guest", LastName = "Google", Email = payload.Email, UserName = payload.Email };
-            //            await _userManager.CreateAsync(user);
-            //            await _userManager.AddLoginAsync(user, info);
-
-            //            var response = await _subscriberRepository.MockUp(user);
-            //            response.IsExternalLogger = true;
-            //            response.Message = "No account, no extacc";
-            //            return Ok(new { token = _jwtokenGenerator.GenerateToken(user), Response = response });
-            //        }
-            //        else
-            //        {
-            //            await _userManager.AddLoginAsync(user, info);
-            //            var response = await _subscriberRepository.MockUp(user);
-            //            response.IsExternalLogger = true;
-            //            response.Message = "Has account, no extacc";
-            //            return Ok(new { token = _jwtokenGenerator.GenerateToken(user), Response = response });
-            //        }
-
-            //    }
-            //    else
-            //    {
-            //        var response = await _subscriberRepository.MockUp(user);
-            //        response.IsExternalLogger = true;
-            //        response.Message = "Has account, has extacc";
-            //        return Ok(new { token = _jwtokenGenerator.GenerateToken(user), Response = response });
-            //    }
-            //}
         }
     }
 }

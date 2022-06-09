@@ -21,7 +21,7 @@ namespace APICore.Repository
             _context = context;
         }
 
-        public async Task<IList<Course>> GetCourseList()
+        public async Task<List<Course>> GetCourseList()
         {
             return await _context.Courses.ToListAsync();
         }

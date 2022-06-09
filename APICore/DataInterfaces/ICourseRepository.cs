@@ -9,7 +9,7 @@ namespace APICore.DataInterfaces
 {
     public interface ICourseRepository
     {
-        Task<IList<Course>> GetCourseList();
+        Task<List<Course>> GetCourseList();
         Task<Course> GetCourseById(string courseId);
         Task<Course> CreateCourse(Course course);
         Task<Course> UpdateCourse(Course course);
